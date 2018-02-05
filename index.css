@@ -1,0 +1,27 @@
+.board {
+    border-collapse: collapse;
+}
+
+.cell {
+    border: 5px solid #000;
+    width: 100px;
+    height: 100px;
+    line-height: 100px;
+    text-align: center;
+    font-size: 80px;
+    color: #eee;
+    background-color: #009;
+}
+
+.flexrow {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 20px
+}
+
+.flexitem {
+    align-self: center;
+}
