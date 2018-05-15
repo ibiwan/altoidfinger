@@ -1,99 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-        <title>Al-Toid-Finger</title>
-        <!-- Bootstrap -->
-        <!-- Latest compiled and minified CSS -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-        <!-- Optional theme -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-        <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-        <!--[if lt IE 9]>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Al-Toid-Finger</title>
+    <!-- Bootstrap -->
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="bootstrap-theme.min.css">
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
         <![endif]-->
-        <!-- My CSS -->
-        <link rel="stylesheet" type="text/css" href="index.css">
-    </head>
-    <body>
-        <div class="container" id="app">
-            <div class="row flexrow">
-                <div
-                    class="alert alert-success flexitem"
-                    style="margin-bottom: 0px;">
-                    <h1 v-if="message" v-html="message" />
+    <!-- My CSS -->
+    <link rel="stylesheet" type="text/css" href="index.css">
+</head>
+
+<body>
+    <div class="container" id="app">
+        <div class="row flexrow">
+            <div class="alert alert-success flexitem" style="margin-bottom: 0px;">
+                <h1 v-if="message" v-html="message" />
+            </div>
+        </div>
+        <div class="row flexrow">
+            <div class="flexitem">
+                <table class="board">
+                    <tr v-for="row in layout">
+                        <td class="cell" v-for="boxName in row" v-html="data.theBoard[boxName]" v-on:click="cellSelect(boxName)">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="row flexrow">
+            <div class="btn-group flexitem" role="group" v-if="mode === Modes.playerSelect">
+                <div class="btn btn-lg btn-info" v-on:click="playerSelect(Players.o)">
+                    Play As
+                    <h1>o</h1>
+                </div>
+                <div class="btn btn-lg btn-warning" v-on:click="playerSelect(Players.x)">
+                    Play As
+                    <h1>&times;</h1>
                 </div>
             </div>
-            <div class="row flexrow">
-                <div class="flexitem">
-                    <table class="board">
-                        <tr v-for="row in layout">
-                            <td
-                                class="cell"
-                                v-for="boxName in row"
-                                v-html="data.theBoard[boxName]"
-                                v-on:click="cellSelect(boxName)">
-                            </td>
-                        </tr>
-                    </table>
+            <div class="btn-group flexitem" role="group" v-if="mode === Modes.start">
+                <div class="btn btn-lg btn-success" v-on:click="gameTypeSelect(GameTypes.vsComputer)">
+                    Vs.
+                    <br />Computer
+                </div>
+                <div class="btn btn-lg btn-success" v-on:click="gameTypeSelect(GameTypes.twoPlayer)">
+                    Two
+                    <br />Player
                 </div>
             </div>
-            <div
-                class="row flexrow">
-                <div
-                    class="btn-group flexitem" role="group"
-                    v-if="mode === Modes.playerSelect">
-                    <div
-                        class="btn btn-lg btn-info"
-                        v-on:click="playerSelect(Players.o)">
-                        Play As <h1>o</h1>
-                    </div>
-                    <div
-                        class="btn btn-lg btn-warning"
-                        v-on:click="playerSelect(Players.x)">
-                        Play As <h1>&times;</h1>
-                    </div>
-                </div>
-                <div
-                    class="btn-group flexitem" role="group"
-                    v-if="mode === Modes.start">
-                    <div
-                        class="btn btn-lg btn-success"
-                        v-on:click="gameTypeSelect(GameTypes.vsComputer)">
-                        Vs.<br />Computer
-                    </div>
-                    <div
-                        class="btn btn-lg btn-success"
-                        v-on:click="gameTypeSelect(GameTypes.twoPlayer)">
-                        Two<br />Player
-                    </div>
-                </div>
-                <div
-                    class="btn btn-lg btn-danger flexitem"
-                    v-if="mode === Modes.playersTurn"
-                    v-on:click="forfeit">
-                    Forfeit
-                </div>
-                <div
-                    class="btn btn-lg btn-primary flexitem"
-                    v-if="mode === Modes.gameFinish"
-                    v-on:click="beginGame">
-                    Play Again
-                </div>
+            <div class="btn btn-lg btn-danger flexitem" v-if="mode === Modes.playersTurn" v-on:click="forfeit">
+                Forfeit
+            </div>
+            <div class="btn btn-lg btn-primary flexitem" v-if="mode === Modes.gameFinish" v-on:click="beginGame">
+                Play Again
             </div>
         </div>
     </div>
+    </div>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="jquery.min.js"></script>
     <!-- Latest compiled and minified JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="bootstrap.min.js"></script>
+    <script src="vue.js"></script>
     <!-- ...then MY javascript. -->
     <script src="main.js"></script>
 </body>
+
 </html>

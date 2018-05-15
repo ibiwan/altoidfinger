@@ -1,3 +1,5 @@
+/*jshint esversion:6*/
+
 const Players = {
     x: '&times;',
     o: 'o',
@@ -91,6 +93,7 @@ function state(mode, message) {
 // returns playermark if win, else false
 function winCheck(aBoard) {
     for (let line of lines) {
+        // if any 3-line has been completed...
         let [a, b, c] = line
         if (
             aBoard[a] !== null &&
@@ -100,11 +103,13 @@ function winCheck(aBoard) {
             return aBoard[a] // returns winning player
         }
     }
-    for (let box of boxes) {
+    for (let box of boxes) { 
+        // if any moves remain...
         if (!aBoard[box]) {
             return false // game can continue
         }
     }
+    // if no moves remain...
     return Players.cat // no more moves and no winner
 }
 
@@ -118,7 +123,7 @@ function beginGame() {
 function forfeit() {
     return state(
         Modes.gameFinish,
-        'Player Forfeited: ' + data.whoseTurn + ' <br /> ' + 'Player ' + otherPlayer(data.whoseTurn) + ' wins!',
+        'Player Forfeited: ' + data.whoseTurn + ' <br /> ' + 'Player ' + otherPlayer(data.whoseTurn) + ' wins!'
     )
 }
 
@@ -185,7 +190,7 @@ function cellSelect(move) {
 }
 
 
-const isAvailable = (move, aBoard) => aBoard[move] === undefined
+const isAvailable = (move, aBoard) => aBoard[move] === null
 
 function getBestMove(aBoard) {
     win = getWinningMove(aBoard)
@@ -292,14 +297,21 @@ function getWinningMove(aBoard) {
 }
 
 function selectMove(strategy) {
-    // console.log('selectMove');return
+    console.log('selectMove')
+
     if (strategy === Strategies.random) {
+        console.log('random', data.theBoard)
+        let box
         do {
-            var box = boxes[Math.floor(Math.random() * boxes.length)]
+            const i = Math.floor(Math.random() * boxes.length)
+            box = boxes[i]
+            console.log('i:', i, 'box:', box, 'isAvailable:', isAvailable(box, data.theBoard))
         } while (!isAvailable(box, data.theBoard))
+        console.log('selected box:', box)
         return box
     }
     if (strategy === Strategies.winInOne) {
+        console.log('winInOne')
         move = getWinningMove()
             // console.log('move',move)
         ret = move ? move : selectMove(Strategies.random)
@@ -307,6 +319,7 @@ function selectMove(strategy) {
         return ret
     }
     if (strategy === Strategies.playBest) {
+        console.log('playBest')
         move = getBestMove(data.theBoard)
         return move ? move : selectMove(Strategies.random)
     }
@@ -330,7 +343,7 @@ function computerMove() {
         if (end === Players.cat) {
             return state(
                 Modes.gameFinish,
-                'Players.cat\'s Game!'
+                'Cat\'s Game!'
             )
         }
 
